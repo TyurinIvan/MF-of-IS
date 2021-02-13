@@ -35,7 +35,7 @@ def encryptText(text, alphabet, key):
     M = len(alphabet)
     data = encode(text, alphabet)
     r = np.dot(np.array(data).reshape(-1, key.shape[0]), key.T) % M
-    print(r)
+    #print(r)
     pt = decode(r.flatten(), alphabet)
     return pt
 
@@ -50,13 +50,21 @@ def decryptText(text, alphabet, key):
 
 
 # text = 'ГНГНЪДЛНВПЬМЕЩЪ'
-text = 'ЗНАТНЫЙБЫЛВОЗОК'
+text = 'CRYPTOGRAPHY'
 abc = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
+abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 key = np.array([
     [1, 2, 0],
     [0, 1, 4],
     [1, 2, 2]
 ])
+
+key = np.array([
+    [1, 2, 2],
+    [4, 5, 6],
+    [7, 8, 9]
+])
+
 
 print(encryptText(text, abc, key))
 print(decryptText(encryptText(text, abc, key),

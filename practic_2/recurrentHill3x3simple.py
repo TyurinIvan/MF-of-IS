@@ -42,9 +42,10 @@ def get_inverse_key(key, M):
 
 
 def encryptText(text, alphabet, key1, key2):
-    text = checkText(text)
+    keySize = key1.shape[1]
+    text = checkText(text, keySize)
     M = len(alphabet)
-    N = (len(text) // key1.shape[0]) + 1
+    N = (len(text) // keySize) + 1
     if encryptTextDebug:
         print('M, N:', M, N)
     key = createKey(key1, key2, N, alphabet)
@@ -53,10 +54,12 @@ def encryptText(text, alphabet, key1, key2):
         print('data:', data)
 
     cnt = 0
-    res = np.zeros(shape=(N - 1, 3), dtype='int_')
-    for i in np.array(data).reshape(-1, key.shape[1]):
+    res = np.zeros(shape=(N - 1, keySize), dtype='int_')
+    for i in np.array(data).reshape(-1, keySize):
         if encryptTextDebug:
             print(i)
+            print('res[cnt]:', res[cnt])
+            print(key[cnt].T)
         res[cnt] = np.dot(i, key[cnt].T) % M
         cnt += 1
 
@@ -67,8 +70,10 @@ def encryptText(text, alphabet, key1, key2):
 
 
 def decryptText(text, alphabet, key1, key2, ):
+    keySize = key1.shape[1]
+    text = checkText(text, keySize)
     M = len(alphabet)
-    N = (len(text) // key1.shape[0]) + 1
+    N = (len(text) // keySize) + 1
     if decryptTextDebug:
         print('N:', N)
     key = createDecryptKey(key1, key2, N, alphabet)
@@ -77,8 +82,8 @@ def decryptText(text, alphabet, key1, key2, ):
     data = encode(text, alphabet)
 
     cnt = 0
-    res = np.zeros(shape=(N - 1, 3), dtype='int_')
-    for i in np.array(data).reshape(-1, key.shape[1]):
+    res = np.zeros(shape=(N - 1, keySize), dtype='int_')
+    for i in np.array(data).reshape(-1, keySize):
         res[cnt] = np.dot(i, key[cnt].T) % M
         if decryptTextDebug:
             print(key[cnt])
@@ -154,18 +159,28 @@ def createDecryptKey(key1, key2, sizeStop,
     return keyInv
 
 
-def checkText(text):
-    if len(text) % 3 == 0:
-        return text
-    elif len(text) % 3 == 1:
-        return text + 'AA'
+def checkText(text, keySize):
+    if keySize == 3:
+        if len(text) % 3 == 0:
+            return text
+        elif len(text) % 3 == 1:
+            return text + 'AA'
+        else:
+            return text + 'A'
+    elif keySize == 2:
+        if len(text) % 2 == 0:
+            return text
+        else:
+            return text + 'A'
     else:
-        return text + 'A'
+        raise KeyError('Ключ задан неверно. Предусмотрен ключ только 2x2 или 3x3.')
 
 
 # text = 'ГНГНЪДЛНВПЬМЕЩЪ'
 # text = 'ГНГНЪДЖХКЕТЖРЮТ'
 text = 'CRYPTOGRAPHY'
+text = 'MATHEMATICS'
+abc = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
 abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 key1 = np.array([
@@ -230,9 +245,9 @@ if mainPartDebug:
     print(get_inverse_key(key6, 26))
     print(get_inverse_key(keyTest, 26))
 
-print(encryptText(text, abc, key3, key4))
-print(decryptText(encryptText(text, abc, key3, key4),
-                  abc, key3, key4))
+chipherText = encryptText(text, abc, key5, key6)
+print(chipherText)
+print(decryptText(chipherText, abc, key5, key6))
 if mainPartDebug:
     print(decryptText('MYIIWTYQBNUXRGE',
                       abc, key3, key4))

@@ -1,3 +1,6 @@
+import numpy as np
+from numpy.linalg import det, inv
+
 def egcd(a, b):
     if a == 0:
         return (b, 0, 1)
@@ -14,6 +17,6 @@ def modinv(a, m):
         return x % m
 
 
-def get_inverse_key(key, M):
+def get_inverse_matrix(key, M):
     d = round(det(key)) % M
     return np.array(np.round(inv(key) * d) * round(modinv(d, M)), dtype=int) % M
