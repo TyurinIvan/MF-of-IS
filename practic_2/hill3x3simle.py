@@ -1,21 +1,5 @@
 import numpy as np
-from numpy.linalg import det, inv
-
-
-def egcd(a, b):
-    if a == 0:
-        return (b, 0, 1)
-    else:
-        g, y, x = egcd(b % a, a)
-        return (g, x - (b // a) * y, y)
-
-
-def modinv(a, m):
-    g, x, y = egcd(a, m)
-    if g != 1:
-        raise Exception('modular inverse does not exist')
-    else:
-        return x % m
+from sympy import Matrix
 
 
 def encode(text, alphabet):
@@ -27,8 +11,7 @@ def decode(data, alphabet):
 
 
 def get_inverse_key(key, M):
-    d = round(det(key))
-    return np.array(np.round(inv(key) * d) * round(modinv(d, M)), dtype=int) % M
+    return np.array(Matrix(*key.shape, key.reshape(-1)).inv_mod(M))
 
 
 def encryptText(text, alphabet, key):
@@ -50,14 +33,9 @@ def decryptText(text, alphabet, key):
 
 
 # text = 'ГНГНЪДЛНВПЬМЕЩЪ'
-text = 'CRYPTOGRAPHY'
+text = 'ARTISTICALLY'
 abc = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
 abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-key = np.array([
-    [1, 2, 0],
-    [0, 1, 4],
-    [1, 2, 2]
-])
 
 key = np.array([
     [1, 2, 2],
@@ -65,6 +43,11 @@ key = np.array([
     [7, 8, 9]
 ])
 
+key = np.array([
+    [6, 24, 1],
+    [13, 16, 10],
+    [20, 17, 15]
+])
 
 print(encryptText(text, abc, key))
 print(decryptText(encryptText(text, abc, key),

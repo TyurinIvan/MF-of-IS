@@ -1,31 +1,11 @@
 import numpy as np
-from numpy.linalg import det, inv
+from sympy import Matrix
 
-modinvDebug = False
+getInversDebug = False
 encryptTextDebug = False
 decryptTextDebug = False
 createDecryptKeyDebug = False
 mainPartDebug = False
-
-
-def egcd(a, b):
-    if a == 0:
-        return (b, 0, 1)
-    else:
-        g, y, x = egcd(b % a, a)
-        return (g, x - (b // a) * y, y)
-
-
-def modinv(a, m):
-    if modinvDebug:
-        print('a, m:', a, m)
-    g, x, y = egcd(a, m)
-    if modinvDebug:
-        print('g, x, y:', g, x, y)
-    if g != 1:
-        raise Exception('modular inverse does not exist')
-    else:
-        return x % m
 
 
 def encode(text, alphabet):
@@ -37,8 +17,10 @@ def decode(data, alphabet):
 
 
 def get_inverse_key(key, M):
-    d = round(det(key)) % M
-    return np.array(np.round(inv(key) * d) * round(modinv(d, M)), dtype=int) % M
+    if getInversDebug:
+        print(np.array(Matrix(*key.shape, key.reshape(-1)).inv_mod(M)))
+
+    return np.array(Matrix(*key.shape, key.reshape(-1)).inv_mod(M))
 
 
 def encryptText(text, alphabet, key1, key2):
@@ -180,6 +162,7 @@ def checkText(text, keySize):
 # text = 'ГНГНЪДЖХКЕТЖРЮТ'
 text = 'CRYPTOGRAPHY'
 text = 'MATHEMATICS'
+text = 'ARITHMETICAL'
 abc = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
 abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -222,6 +205,13 @@ key7 = np.array([
     [21, 17]
 ])
 
+key8 = np.array([
+    [11, 15, 12],
+    [15, 2, 15],
+    [17, 15, 19]
+])
+
+
 keyTest = np.array([
     [12, 10, 25],
     [2, 17, 0],
@@ -245,9 +235,9 @@ if mainPartDebug:
     print(get_inverse_key(key6, 26))
     print(get_inverse_key(keyTest, 26))
 
-chipherText = encryptText(text, abc, key5, key6)
+chipherText = encryptText(text, abc, key6, key7)
 print(chipherText)
-print(decryptText(chipherText, abc, key5, key6))
+print(decryptText(chipherText, abc, key6, key7))
 if mainPartDebug:
     print(decryptText('MYIIWTYQBNUXRGE',
                       abc, key3, key4))
