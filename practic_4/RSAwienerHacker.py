@@ -1,9 +1,3 @@
-'''
-Created on Dec 14, 2011
-
-@author: pablocelayes
-'''
-
 import ContinuedFractions, Arithmetic, RSAvulnerableKeyGenerator
 
 def hack_RSA(e,n):
@@ -11,10 +5,11 @@ def hack_RSA(e,n):
     Finds d knowing (e,n)
     applying the Wiener continued fraction attack
     '''
-    frac = ContinuedFractions.rational_to_contfrac(e, n)
-    convergents = ContinuedFractions.convergents_from_contfrac(frac)
+    frac = ContinuedFractions.rational_to_contfrac(e, n)  # Создаём list частных непрерывных дрообей [a0, ..., an]
+    convergents = ContinuedFractions.convergents_from_contfrac(frac)  # вычисление подходящих дробей
     
     for (k,d) in convergents:
+        # print('k, d: ', k, d)
         
         #check if d is actually the key
         if k!=0 and (e*d-1)%k == 0:
@@ -23,8 +18,10 @@ def hack_RSA(e,n):
             # check if the equation x^2 - s*x + n = 0
             # has integer roots
             discr = s*s - 4*n
+            # print(phi, s, discr)
             if(discr>=0):
                 t = Arithmetic.is_perfect_square(discr)
+                # print('sqrt: ', t)
                 if t!=-1 and (s+t)%2==0:
                     print("Hacked!")
                     return d

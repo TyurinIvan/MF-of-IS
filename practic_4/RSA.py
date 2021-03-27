@@ -19,7 +19,9 @@ def get_inverse(key, M):
 
 key_len = 512
 (public_key, private_key) = rsa.newkeys(key_len)
-# (public_key, private_key) = (rsa.key.PublicKey(33233, 65537), rsa.key.PrivateKey(33233, 65537, 31877, 199, 167))
+# (public_key, private_key) = (rsa.key.PublicKey(33233, 65537), rsa.key.PrivateKey(33233, 65537, 31877, 199, 167)) # Small
+# (public_key, private_key) = (rsa.key.PublicKey(324408067905331294061961362648401604850041094409525393, 65537),
+#                              rsa.key.PrivateKey(324408067905331294061961362648401604850041094409525393, 65537, 261053033937948972126275498807071761584832756042575305, 18527606826476548858471694039, 17509442581744647239696087)) # Normal
 
 message = b'ARTISTICALLY'
 

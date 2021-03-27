@@ -1,10 +1,3 @@
-'''
-Created on Dec 14, 2011
-
-@author: pablocelayes
-    
-'''
-
 def rational_to_contfrac(x,y):
     '''
     Converts a rational x/y fraction into
